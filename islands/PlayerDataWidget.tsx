@@ -96,8 +96,11 @@ export default function PlayerDataWidget() {
     return(
         <div class="flex flex-col gap-2 grow select-none">
             <div class="relative w-full" onMouseLeave={() => setShowDropdown(false)}>
-                <div class="flex flex-row items-center py-2 px-3 border rounded-xl">
-                    <input placeholder="Player name..." class="px-2 w-full" value={searchName} 
+                <div class="flex items-center overflow-hidden border rounded-4xl transition-colors focus-within:border-[rgba(124,109,250,0.5)]">
+                    <input
+                        type="text"
+                        class="flex-1 bg-transparent border-none outline-none px-[14px] py-3 text-accent-dim placeholder:text-white/25 font-[system-ui]"
+                        placeholder="Player name..." value={searchName} 
                         onInput={(e) => {
                             const searchTarget = e.currentTarget.value;
                             setSearchName(searchTarget);
@@ -117,7 +120,11 @@ export default function PlayerDataWidget() {
                             }
                         }}
                     />
-                    <button type="button" class="cursor-pointer text-nowrap" onClick={() => getData(searchName)}>Search Player</button>
+                    <button type="button" class="flex items-center gap-[6px] bg-white/5 border-l border-faint text-white/60 font-medium px-4 py-3 whitespace-nowrap transition-colors hover:bg-[rgba(124,109,250,0.15)] hover:text-accent-light cursor-pointer"
+                        onClick={() => getData(searchName)}
+                    >
+                        Search Player
+                    </button>
                 </div>
                 {
                     showDropdown ?
@@ -136,30 +143,80 @@ export default function PlayerDataWidget() {
             {
                 (playerGames.value.length > 0) ?
                 <Fragment>
-                    <div class="font-bold text-sm">Aliases: {playerAliases.value.join(", ")}</div>
+                    <div class="px-6 flex items-center gap-2 text-sm font-bold">
+                        <span class="text-gray-300 uppercase tracking-widest font-mono">Aliases</span>
+                        <span class="text-gray-300">·</span>
+                            {playerAliases.value.map((alias) => (
+                                <span
+                                    key={alias}
+                                    class="bg-gray-800/80 border border-gray-700/50 text-gray-200 rounded px-2 py-0.5 font-mono rounded"
+                                >
+                                {alias}
+                                </span>
+                            ))}
+                        </div>
                     <div class="grow relative">
-                        <div class="h-full w-full flex flex-col absolute overflow-auto gap-2">
+                        <div class="h-full w-full flex flex-col absolute overflow-auto gap-4 pe-4">
                             {
                                 playerGames.value.map((game, idx: number) => 
-                                    <div class={"flex flex-col p-2 border-2 rounded-2xl " + (game.win ? "border-green-500" : "border-red-500")} key={"game-" + idx}>
-                                        <div class="p-2 flex flex-row gap-3">
-                                            <button type="button" class="font-bold cursor-pointer hover:text-blue-500" onClick={() => popupVotes(game.votes)}>
-                                                See votes
-                                            </button>
-                                            <div>{game.map}, {game.gameType}, Version: {game.version}</div>
-                                            <div class={"ms-auto font-bold " + (game.win ? "text-green-500" : "text-red-500")}>{(game.win) ? "VICTORY" : "DEFEAT"}</div>
+                                    <div class={`
+                                        relative rounded-xl border
+                                        flex flex-col p-3
+                                        bg-card backdrop-blur-sm
+                                        ${game.win ? "border-emerald-100/30" : "border-red-100/30"}
+                                        transition-all duration-300 hover:shadow-lg
+                                        ${game.win ? "hover:shadow-emerald-500/20" : "hover:shadow-red-500/20"}
+                                    `} key={"game-" + idx}>
+                                        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-300/60">
+                                            <div class="flex items-center gap-3">
+                                                <button type="button" onClick={() => popupVotes(game.votes)}
+                                                    class="text-gray-400 hover:text-gray-200 transition-colors underline underline-offset-2 font-mono cursor-pointer"
+                                                >
+                                                    See votes
+                                                </button>
+                                                <span class="text-gray-400 text-xs">·</span>
+                                                <span class="text-gray-200 font-mono">{game.map}</span>
+                                                <span class="text-gray-400 text-xs">·</span>
+                                                <span class="text-gray-200 font-mono">{game.gameType}</span>
+                                                <span class="text-gray-400 text-xs">·</span>
+                                                <span class="text-gray-200 font-mono">v{game.version}</span>
+                                            </div>
+                                            <span
+                                                class={`font-black tracking-[0.2em] uppercase 
+                                                    ${game.win ? "text-emerald-400" : "text-red-400"}
+                                                `}>
+                                                {(game.win) ? "VICTORY" : "DEFEAT"}
+                                            </span>
                                         </div>
-                                        <div class="grid grid-cols-5 gap-3">
+                                        <div class="grid grid-cols-5 gap-3 pt-4">
                                             {
                                                 game.players.map((player, idx2: number) => 
-                                                    <div key={"player-" + idx2} class="flex flex-col border rounded-xl p-2">
-                                                        <div class="flex flex-row justify-between font-bold">
-                                                            <div>{player.name}</div>
+                                                    <div class={`
+                                                            relative rounded-lg border p-3 transition-all duration-200
+                                                            bg-violet-500/10 border-violet-200/20
+                                                            hover:brightness-125
+                                                            flex flex-col
+                                                        `} key={"player-" + idx2} 
+                                                    >
+                                                        <div class="flex flex-row justify-between font-bold items-center mb-1.5 gap-4">
+                                                            <div class="truncate">{player.name}</div>
                                                             {
-                                                                !(game.gameType == GAME_TYPE_FFA) ? <div class="font-bold text-nowrap">Team {player.team + 1}</div> : null
+                                                                !(game.gameType == GAME_TYPE_FFA) ? <div class="font-bold text-gray-200 font-mono text-nowrap">T{player.team + 1}</div> : null
                                                             }
-                                                        </div>                                                
-                                                        <div class="mt-auto">{player.faction} {(player.randomFaction ? "(Random Faction)" : "")}</div>
+                                                        </div>
+                                                        <div class="flex flex-row items-center gap-1.5 text-xs mt-auto">
+                                                            <span class="font-bold tracking-wide">
+                                                                {player.faction.toUpperCase().split(" ")[0]}
+                                                            </span>
+                                                            <span class="text-gray-400">·</span>
+                                                            <span class="text-gray-200">{player.faction.toUpperCase().split(" ")[1]}</span>
+                                                            {(player.randomFaction) ? 
+                                                                <span class="ml-auto bg-gray-600 text-gray-300 rounded px-1 py-0.5 border border-gray-500">
+                                                                    RANDOM
+                                                                </span>
+                                                                : null
+                                                            }
+                                                        </div>
                                                     </div>
                                                 )
                                             }
@@ -167,11 +224,13 @@ export default function PlayerDataWidget() {
                                     </div>
                                 )
                             }
+                            <button type="button" className="w-full py-3 rounded-xl border border-gray-600 text-gray-400 hover:text-gray-200 hover:border-gray-500 tracking-[0.2em] uppercase font-mono transition-all hover:bg-gray-700/40 cursor-pointer disabled:cursor-not-allowed"
+                                onClick={() => getData(searchName, pageNumber.value)} disabled={disableLoadMore.value}
+                            >
+                                {disableLoadMore.value ? "No more record" : "Load more"}
+                            </button>
                         </div>
                     </div>
-                    <button type="button" class="mb-3 font-bold p-2 border rounded-xl cursor-pointer disabled:cursor-not-allowed" onClick={() => getData(searchName, pageNumber.value)} disabled={disableLoadMore}>
-                        Load more
-                    </button>
                 </Fragment>
                 : null
             }

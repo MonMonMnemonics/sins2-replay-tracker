@@ -8,7 +8,7 @@ export default define.page(function App({ Component }) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>sins2-replay-tracker</title>
       </head>
-      <body>
+      <body class="bg-page">
         <Component />
       </body>
     </html>

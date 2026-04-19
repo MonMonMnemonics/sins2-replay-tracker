@@ -173,85 +173,96 @@ export default function ReplayParser() {
                 : null
             }
             <input class="hidden" ref={fileInput} type="file" onChange={parseFile} accept=".sins2_record" value=""/>
-            <button type="button" class="font-bold p-2 border rounded-xl cursor-pointer" onClick={() => {
+            <button type="button" class="font-bold p-2 border cursor-pointer rounded-lg px-4 py-2" onClick={() => {
                 if (fileInput) {
                     fileInput.current?.click();
                 }
             }}>
-                { (fileName.value == "") ? "Upload a Replay File" : fileName.value}
+                { (fileName.value == "") ? "Upload a Replay File" : "FILE: " + fileName.value}
             </button>
             {
                 (gameData.value != null) ?
                 <Fragment>
                     <div class="h-full w-full flex flex-col overflow-auto gap-2 grow">
-                        <div>Game version: {gameData.value.exeVer.major + "." + gameData.value.exeVer.minor + "." + gameData.value.exeVer.patch + " (" + gameData.value.ver + ")"}</div>
-                        <div>Replay file by: {gameData.value.player[gameData.value.recordPlayerIdx].name}</div>
-                        <div>Map: {gameData.value.map}</div>
-                        <div>Mode: {gameData.value.isMultiplayer ? "Multiplayer" : "Singleplayer"}, {gameData.value.isFFA ? "FFA" : "Team"}</div>
-                        <div class="flex flex-row gap-3 grow">
-                            <div class="w-[30%] relative">
-                                <div class="h-full w-full flex flex-col absolute overflow-auto gap-2">
-                                    {
-                                        gameData.value.player.map((player: PlayerData, idx: number) => 
-                                            <div key={"player-" + idx} class="flex flex-col border rounded-xl p-2 text-xl">
-                                                <div class="flex flex-row justify-between font-bold">
-                                                    <div>{player.name} {(player.id == "0-") ? "(AI)" : ""}</div>
-                                                    {
-                                                        !gameData.value?.isFFA ? <div class="font-bold text-nowrap">Team {player.team + 1}</div> : null
-                                                    }
-                                                </div>                                                
-                                                <div>{player.faction} {(player.randomFaction ? "(Random Faction)" : "")}</div>
-                                            </div>
-                                        )
-                                    }
-                                </div>
-                            </div>
-                            <div class="w-[50%] relative">
-                                <div class="h-full w-full flex flex-col absolute overflow-auto gap-2">
-                                    {
-                                        chats.value.map((chat, idx: number) => 
-                                            <Fragment key={"chat-" + idx}>
-                                                {
-                                                    (idx > 0) ? <hr/> : null
-                                                }
-                                                <div class="flex flex-col">
-                                                    <div>{new Date(chat.timeStamp).toISOString().substring(11, 19)}, {chat.fromName} to {chat.toName}</div>
-                                                    <div>{chat.text}</div>
+                        <div className="mx-auto px-6 py-3 flex flex-row justify-around gap-x-6 gap-y-1 text-lg text-gray-500 border-y border-gray-300 text-white font-bold w-full">
+                            <span><span>VERSION:</span> <span>{gameData.value.exeVer.major + "." + gameData.value.exeVer.minor + "." + gameData.value.exeVer.patch + " (" + gameData.value.ver + ")"}</span></span>
+                            <span><span>REPLAY OWNER:</span> <span>{gameData.value.player[gameData.value.recordPlayerIdx].name}</span></span>
+                            <span><span>MAP:</span> <span>{gameData.value.map}</span></span>
+                            <span><span>MODE:</span> <span>{gameData.value.isMultiplayer ? "Multiplayer" : "Singleplayer"}, {gameData.value.isFFA ? "FFA" : "Team"}</span></span>
+                        </div>
+                        <div class="flex flex-row grow">
+                            <div class="w-[30%] flex flex-col border-r pe-3">
+                                <div class="text-center font-bold text-xl pb-3">Players</div>
+                                <div class="grow relative">
+                                    <div class="h-full w-full flex flex-col absolute overflow-auto gap-2">
+                                        {
+                                            gameData.value.player.map((player: PlayerData, idx: number) => 
+                                                <div key={"player-" + idx} class="flex flex-col border rounded-xl p-2 text-xl">
+                                                    <div class="flex flex-row justify-between font-bold">
+                                                        <div>{player.name} {(player.id == "0-") ? "(AI)" : ""}</div>
+                                                        {
+                                                            !gameData.value?.isFFA ? <div class="font-bold text-nowrap">Team {player.team + 1}</div> : null
+                                                        }
+                                                    </div>                                                
+                                                    <div>{player.faction} {(player.randomFaction ? "(Random Faction)" : "")}</div>
                                                 </div>
-                                            </Fragment>
-                                        )
-                                    }
+                                            )
+                                        }
+                                    </div>
                                 </div>
                             </div>
-                            <div class="w-[20%] relative">
-                                <div class="h-full w-full flex flex-col absolute overflow-auto gap-2">
-                                    {
-                                        gameData.value.isFFA ? 
-                                        <Fragment>
-                                            {
-                                                gameData.value.player.map((player, idx: number) => 
-                                                    <div key={"win-ffa-" + idx} 
-                                                        class={"flex flex-col border rounded-xl p-2 text-xl text-center cursor-pointer" + ((idx == winner.value) ? " bg-white text-black" : "")}
-                                                        onClick={() => winner.value = idx}
-                                                    >
-                                                        {player.name} won
+                            <div class="w-[50%] flex flex-col px-3">
+                                <div class="text-center font-bold text-xl pb-3">Chat Log</div>
+                                <div class="grow relative">
+                                    <div class="h-full w-full flex flex-col absolute overflow-auto gap-2">
+                                        {
+                                            chats.value.map((chat, idx: number) => 
+                                                <Fragment key={"chat-" + idx}>
+                                                    {
+                                                        (idx > 0) ? <hr/> : null
+                                                    }
+                                                    <div class="flex flex-col">
+                                                        <div>{new Date(chat.timeStamp).toISOString().substring(11, 19)}, {chat.fromName} to {chat.toName}</div>
+                                                        <div>{chat.text}</div>
                                                     </div>
-                                                )
-                                            }
-                                        </Fragment> :
-                                        <Fragment>
-                                            {
-                                                [...new Set(gameData.value.player.map(player => player.team))].map(teamNumber => 
-                                                    <div key={"win-team-" + teamNumber} 
-                                                        class={"flex flex-col border rounded-xl p-2 text-xl text-center cursor-pointer" + ((teamNumber == winner.value) ? " bg-white text-black" : "")}
-                                                        onClick={() => winner.value = teamNumber}
-                                                    >
-                                                        Team {teamNumber + 1} won
-                                                    </div>
-                                                )
-                                            }
-                                        </Fragment>
-                                    }
+                                                </Fragment>
+                                            )
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-[20%] flex flex-col relative border-l">
+                                <div class="text-center font-bold text-xl pb-3">Match Result</div>
+                                <div class="grow relative">
+                                    <div class="h-full w-full flex flex-col absolute overflow-auto gap-2 ps-3">
+                                        {
+                                            gameData.value.isFFA ? 
+                                            <Fragment>
+                                                {
+                                                    gameData.value.player.map((player, idx: number) => 
+                                                        <div key={"win-ffa-" + idx} 
+                                                            class={"rounded-2xl border p-2 font-bold tracking-wider uppercase transition-all duration-200 text-center cursor-pointer" + ((idx == winner.value) ? " bg-white text-black" : "")}
+                                                            onClick={() => winner.value = idx}
+                                                        >
+                                                            {player.name} won
+                                                        </div>
+                                                    )
+                                                }
+                                            </Fragment> :
+                                            <Fragment>
+                                                {
+                                                    [...new Set(gameData.value.player.map(player => player.team))].map(teamNumber => 
+                                                        <div key={"win-team-" + teamNumber} 
+                                                            class={"rounded-2xl border text-xl p-2 font-bold tracking-wider uppercase transition-all duration-200 text-center cursor-pointer" + ((teamNumber == winner.value) ? " bg-white text-black" : "")}
+                                                            onClick={() => winner.value = teamNumber}
+                                                        >
+                                                            Team {teamNumber + 1} won
+                                                        </div>
+                                                    )
+                                                }
+                                            </Fragment>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -263,7 +274,7 @@ export default function ReplayParser() {
                             !gameData.value.isMultiplayer ? "Game is singleplayer"
                             : (gameData.value.player.filter(e => e.id == "0-").length > 0) ? "Game has AI player"
                             : (winner.value < 0) ? "Need to identify the winner of the game"
-                            : "Submit Result"
+                            : "Submit Result As " + gameData.value.player[gameData.value.recordPlayerIdx].name
                         }
                     </button>
                 </Fragment>
