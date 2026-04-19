@@ -5,8 +5,8 @@ export const app = new App<State>();
 
 app.use(staticFiles());
 app.use(cors({
-    origin: ((Deno.env.get("DENO_ENV") === "production") ? "*3mworkshop.org" : "*")
+    origin: ((Deno.env.get("NODE_ENV") === "production") ? "*3mworkshop.org" : "*")
 }));
 app.fsRoutes();
 
-console.log("RUNNING ON " + ((Deno.env.get("DENO_ENV") === "production") ? "PRODUCTION" : "DEVELOPMENT"));
+console.log("RUNNING ON " + ((Deno.env.get("NODE_ENV") === "production") ? "PRODUCTION" : "DEVELOPMENT"));
