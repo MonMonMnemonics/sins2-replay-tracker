@@ -1,0 +1,7 @@
+{
+  "apps" : [{
+    "name" : "sins2ReplayTracker",
+    "script": "deno task start",
+    "exec_interpreter": "none"
+  }]
+}
