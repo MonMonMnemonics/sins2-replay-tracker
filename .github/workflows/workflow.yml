@@ -25,4 +25,4 @@ jobs:
           SSH_USER: ${{ secrets.USER_NAME }}
     - name: Execute deploy command
       shell: bash
-      run: ssh deploy_server "cd ${{ secrets.DEPLOY_FOLDER }} && git pull && deno install && deno task build && pm2 restart sins2ReplayTracker"
+      run: ssh deploy_server "cd ${{ secrets.DEPLOY_FOLDER }} && git pull && ~/.deno/bin/deno install && ~/.deno/bin/deno task build && pm2 restart sins2ReplayTracker"
