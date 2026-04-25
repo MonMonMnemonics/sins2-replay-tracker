@@ -10,6 +10,7 @@ export default function PlayerDataWidget() {
     const [searchName, setSearchName] = useState("");
     const [showDropdown, setShowDropdown] = useState(false);
     const [suggestions, setSuggestion] = useState<string[]>([]);
+    const [eloTooltip, setEloTooltip] = useState<boolean>(false);
 
     const pageNumber = useSignal(0);
     const playerGames = useSignal<gamePlayerData[]>([]);
@@ -166,9 +167,24 @@ export default function PlayerDataWidget() {
                     `}>
                         <div class="flex flex-row items-center gap-7">
                             <div class="w-[33%] max-w-[40ch] aspect-3/2 flex flex-col font-mono">
-                                <div class="my-auto text-center font-bold text-3xl">
-                                    <span>Elo Score</span><br/>
-                                    <span>{ playerMetaData.value.elo }</span>
+                                <div class="my-auto">
+                                    <div class="flex flex-row items-center gap-2 justify-center">
+                                        <div class="text-center font-bold text-3xl">Elo Score</div>
+                                        <div class="border border-2 aspect-square h-[1.5em] flex flex-col font-bold text-sm rounded-full cursor-help relative"
+                                            onMouseEnter={() => setEloTooltip(true)} onMouseLeave={() => setEloTooltip(false)}
+                                        >
+                                            <div class="text-center w-full my-auto">
+                                                ?
+                                            </div>
+                                            {
+                                                (eloTooltip) ?
+                                                <div class="absolute flex flex-col text-center w-[15em] p-5 rounded-xl bg-black text-sm opacity-90 z-10">
+                                                    This elo score is calculated using Bradley-Terry model and updated once per day. 
+                                                </div> : null
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="text-center font-bold text-3xl w-full">{ playerMetaData.value.elo }</div>
                                 </div>
                                 <div class="mb-3 text-center">Games: {playerMetaData.value.totalGames}</div>
                             </div>

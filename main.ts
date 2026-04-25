@@ -22,4 +22,6 @@ async function recalcElo() {
     }, 23*60*60*1000);
 }
 
-recalcElo();
+if (Deno.env.get("NODE_ENV") === "production") {
+    recalcElo();
+}
