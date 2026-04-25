@@ -111,7 +111,7 @@ export default function PlayerDataWidget() {
 
     return(
         <div class="flex flex-col gap-2 grow select-none">
-            <div class="relative w-full" onMouseLeave={() => setShowDropdown(false)}>
+            <div class="relative w-full z-20" onMouseLeave={() => setShowDropdown(false)}>
                 <div class="flex items-center overflow-hidden border rounded-4xl transition-colors focus-within:border-[rgba(124,109,250,0.5)]">
                     <input
                         type="text"
@@ -147,7 +147,7 @@ export default function PlayerDataWidget() {
                     <div class="absolute w-full overflow-y-auto">
                         {
                             suggestions.filter(name => name.toLowerCase().includes(searchName.toLowerCase())).map(name => 
-                                <div key={"suggestion-" + name} onClick={() => {setSearchName(name); setShowDropdown(false); getData(name);}} class="w-full bg-black text-white px-2 py-1 font-bold hover:text-black hover:bg-white cursor-pointer z-10">
+                                <div key={"suggestion-" + name} onClick={() => {setSearchName(name); setShowDropdown(false); getData(name);}} class="w-full bg-black text-white px-2 py-1 font-bold hover:text-black hover:bg-white cursor-pointer z-30">
                                     {name}
                                 </div>
                             )
