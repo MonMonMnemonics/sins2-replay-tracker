@@ -6,6 +6,7 @@
     "build": "vite build",
     "start": "deno serve --port=3004 --env-file -A _fresh/server.js",
     "update": "deno run -A -r jsr:@fresh/update .",
+    "elo:recalc": "deno run -A --env-file scripts/RecalcElo.ts",
     "db:generate": "deno run -A npm:drizzle-kit generate",
     "db:migrate": "deno run -A --node-modules-dir --env-file npm:drizzle-kit migrate"
   },

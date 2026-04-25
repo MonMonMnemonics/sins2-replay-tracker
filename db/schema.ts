@@ -1,6 +1,8 @@
 import { sqliteTable, integer, text, unique, uniqueIndex, AnySQLiteColumn } from "drizzle-orm/sqlite-core";
 import { sql, SQL } from "drizzle-orm";
 
+export const initialElo = 1000;
+
 export const game = sqliteTable("game", {
     id: integer("id").primaryKey(),
     gameId: text("game_id").notNull().unique(),
@@ -28,7 +30,8 @@ export const gamePlayer = sqliteTable("game_player", {
 export const player = sqliteTable("player", {
     id: integer("id").primaryKey(),
     uuid: text("uuid").notNull(),
-    sinsId: text("sins2_id").notNull().unique()
+    sinsId: text("sins2_id").notNull().unique(),
+    elo: integer('elo').notNull().default(initialElo)
 });
 
 export const playerName = sqliteTable("player_name", {

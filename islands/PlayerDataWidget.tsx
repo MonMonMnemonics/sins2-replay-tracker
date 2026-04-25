@@ -4,6 +4,7 @@ import { gamePlayerData } from "@/utils.ts";
 import { Fragment } from "preact";
 import { GAME_TYPE_FFA } from "@/db/schema.ts";
 import Swal from "sweetalert2";
+import { PlayerStatMetadata } from "@/routes/api/player.tsx";
 
 export default function PlayerDataWidget() {
     const [searchName, setSearchName] = useState("");
@@ -12,9 +13,16 @@ export default function PlayerDataWidget() {
 
     const pageNumber = useSignal(0);
     const playerGames = useSignal<gamePlayerData[]>([]);
-    const playerAliases = useSignal<string[]>([]);
     const disableLoadMore = useSignal(false);
     const fetchSuggestionTimeout = useSignal<number | null>(null);
+
+    const playerMetaData = useSignal<PlayerStatMetadata>({
+        names: [],
+        factionPickRate: {},
+        factionWinRate: {},
+        totalGames: 0,
+        elo: 0
+    });
 
     useEffect(() => {
         const queryParam =  new URLSearchParams(globalThis.location.search);
@@ -52,7 +60,15 @@ export default function PlayerDataWidget() {
         const body = await res.json()
         
         if (page == 0) {
-            playerAliases.value = body.metaData.names ?? [];
+            playerMetaData.value = {
+                names: [],
+                factionPickRate: {},
+                factionWinRate: {},
+                totalGames: 0,
+                elo: 0,
+                ...(body.metaData ?? {})
+            };
+
             playerGames.value = body.games ?? [];
             disableLoadMore.value = false;
         } else {
@@ -143,10 +159,54 @@ export default function PlayerDataWidget() {
             {
                 (playerGames.value.length > 0) ?
                 <Fragment>
-                    <div class="px-6 flex items-center gap-2 text-sm font-bold">
-                        <span class="text-gray-300 uppercase tracking-widest font-mono">Aliases</span>
-                        <span class="text-gray-300">·</span>
-                            {playerAliases.value.map((alias) => (
+                    <div class={`
+                        relative rounded-2xl border border-gray-600
+                        flex flex-col p-3 gap-3
+                        bg-card backdrop-blur-sm
+                    `}>
+                        <div class="flex flex-row items-center gap-7">
+                            <div class="w-[33%] max-w-[40ch] aspect-3/2 flex flex-col font-mono">
+                                <div class="my-auto text-center font-bold text-3xl">
+                                    <span>Elo Score</span><br/>
+                                    <span>{ playerMetaData.value.elo }</span>
+                                </div>
+                                <div class="mb-3 text-center">Games: {playerMetaData.value.totalGames}</div>
+                            </div>
+                            <div class="w-full flex flex-col gap-4 h-full text-zinc-300 font-mono uppercase">
+                                <div class="text-center tracking-widest text-xl">Faction Pick</div>
+                                <div class="grow relative">
+                                    <div class="absolute flex flex-col gap-1 w-full h-full flex-wrap">
+                                        {
+                                            Object.entries(playerMetaData.value.factionPickRate).map(([factionName, pickRate]) => 
+                                                <div key={'pick-rate-' + factionName} class="flex flex-row items-center justify-between w-[25ch]">
+                                                    <div>{factionName}</div>
+                                                    <div class="font-bold">{pickRate}%</div>
+                                                </div>
+                                            )
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-full flex flex-col gap-4 h-full text-zinc-300 font-mono uppercase">
+                                <div class="text-center tracking-widest text-xl">Faction Win Rate</div>
+                                <div class="grow relative">
+                                    <div class="absolute flex flex-col gap-1 w-full h-full flex-wrap">
+                                        {
+                                            Object.entries(playerMetaData.value.factionWinRate).map(([factionName, winRate]) => 
+                                                <div key={'win-rate-' + factionName} class="flex flex-row items-center justify-between w-[25ch]">
+                                                    <div>{factionName}</div>
+                                                    <div class="font-bold">{winRate}%</div>
+                                                </div>
+                                            )
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-6 flex items-center gap-2 text-sm font-bold">
+                            <span class="text-gray-300 uppercase tracking-widest font-mono">Aliases</span>
+                            <span class="text-gray-300">·</span>
+                            {playerMetaData.value.names.map((alias) => (
                                 <span
                                     key={alias}
                                     class="bg-gray-800/80 border border-gray-700/50 text-gray-200 rounded px-2 py-0.5 font-mono rounded"
@@ -155,6 +215,7 @@ export default function PlayerDataWidget() {
                                 </span>
                             ))}
                         </div>
+                    </div>
                     <div class="grow relative">
                         <div class="h-full w-full flex flex-col absolute overflow-auto gap-4 pe-4">
                             {
