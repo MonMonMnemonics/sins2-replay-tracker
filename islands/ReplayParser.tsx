@@ -20,6 +20,7 @@ export default function ReplayParser() {
     const fileInput = useRef<HTMLInputElement>(null);
     const fileName = useSignal("");
     const gameData = useSignal<MetaData|null>(null);
+    const isFromSavedGame = useSignal<boolean>(false);
     const chats = useSignal<ChatMessages[]>([])
     const winner = useSignal(-1);
     const isLoading = useSignal<boolean>(false);
@@ -50,6 +51,7 @@ export default function ReplayParser() {
                 
                 fileName.value = "";
                 winner.value = -1;
+                isFromSavedGame.value = false;
                 chats.value = [];
                 gameData.value = null;
             } else {
@@ -142,10 +144,12 @@ export default function ReplayParser() {
                     })),
                     isFFA: (metaData.lobby.player_slots.configuration.team_count == 0),
                     recordPlayerIdx: metaData.recorder_player_index,
-                    gameId: metaData.game_id
+                    gameId: metaData.game_id,
+                    randomizedPos: metaData.lobby.scenario_info.ignore_teams_for_start_positions ?? false
                 };
 
                 winner.value = -1;
+                isFromSavedGame.value = metaData.lobby.is_loading_saved_game ?? false;
             }
         } catch {
             swal.fire({
@@ -188,7 +192,7 @@ export default function ReplayParser() {
                             <span><span>VERSION:</span> <span>{gameData.value.exeVer.major + "." + gameData.value.exeVer.minor + "." + gameData.value.exeVer.patch + " (" + gameData.value.ver + ")"}</span></span>
                             <span><span>REPLAY OWNER:</span> <span>{gameData.value.player[gameData.value.recordPlayerIdx].name}</span></span>
                             <span><span>MAP:</span> <span>{gameData.value.map}</span></span>
-                            <span><span>MODE:</span> <span>{gameData.value.isMultiplayer ? "Multiplayer" : "Singleplayer"}, {gameData.value.isFFA ? "FFA" : "Team"}</span></span>
+                            <span><span>MODE:</span> <span>{gameData.value.isMultiplayer ? "Multiplayer" : "Singleplayer"}, {gameData.value.isFFA ? "FFA" : "Team"}, {gameData.value.randomizedPos ? "Random Position" : "Fixed Position"}</span></span>
                         </div>
                         <div class="flex flex-row grow">
                             <div class="w-[30%] flex flex-col border-r pe-3">
@@ -267,13 +271,15 @@ export default function ReplayParser() {
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="mb-3 font-bold p-2 border rounded-xl cursor-pointer disabled:cursor-not-allowed" disabled={!gameData.value.isMultiplayer || (gameData.value.player.filter(e => e.id == "0-").length > 0) || (winner.value < 0)}
+                    <button type="button" class="mb-3 font-bold p-2 border rounded-xl cursor-pointer disabled:cursor-not-allowed" 
+                        disabled={!gameData.value.isMultiplayer || (gameData.value.player.filter(e => e.id == "0-").length > 0) || (winner.value < 0) || isFromSavedGame.value}
                         onClick={submitVote}
                     >
                         {
                             !gameData.value.isMultiplayer ? "Game is singleplayer"
                             : (gameData.value.player.filter(e => e.id == "0-").length > 0) ? "Game has AI player"
                             : (winner.value < 0) ? "Need to identify the winner of the game"
+                            : (isFromSavedGame.value) ? "Lobby loaded from a saved game"
                             : "Submit Result As " + gameData.value.player[gameData.value.recordPlayerIdx].name
                         }
                     </button>

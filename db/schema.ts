@@ -11,6 +11,7 @@ export const game = sqliteTable("game", {
     exeVerMinor: integer("exe_ver_minor").notNull(),
     exeVerPatch: integer("exe_ver_patch").notNull(),
     gameType: text("game_type").notNull(),
+    randomizedPos: integer("randomized_pos", {mode: "boolean"}).notNull().default(false),
     map: text("map").notNull()
 });
 
@@ -40,7 +41,6 @@ export const playerName = sqliteTable("player_name", {
     name: text("name").notNull()
 }, (table) => [
     unique().on(table.playerId, table.name),
-    uniqueIndex("lowerCaseName").on(lower(table.name))
 ]);
 
 export const vote = sqliteTable("vote", {

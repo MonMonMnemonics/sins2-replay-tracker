@@ -144,7 +144,8 @@ export const handler = define.handlers({
                     }),
                     map: game.game?.map ?? "",
                     gameType: game.game?.gameType ?? "",
-                    version: (game.game?.exeVerMajor ?? "") + "." + (game.game?.exeVerMinor ?? "") + "." + (game.game?.exeVerPatch ?? "")
+                    version: (game.game?.exeVerMajor ?? "") + "." + (game.game?.exeVerMinor ?? "") + "." + (game.game?.exeVerPatch ?? ""),
+                    randomizedPos: game.game?.randomizedPos ?? false
                 })
             });
 

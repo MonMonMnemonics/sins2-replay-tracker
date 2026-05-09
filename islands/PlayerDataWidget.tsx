@@ -256,6 +256,8 @@ export default function PlayerDataWidget() {
                                                 <span class="text-gray-400 text-xs">·</span>
                                                 <span class="text-gray-200 font-mono">{game.gameType}</span>
                                                 <span class="text-gray-400 text-xs">·</span>
+                                                <span class="text-gray-200 font-mono">{game.randomizedPos ? "RANDOM POSITION" : "FIXED POSITION"}</span>
+                                                <span class="text-gray-400 text-xs">·</span>
                                                 <span class="text-gray-200 font-mono">v{game.version}</span>
                                             </div>
                                             <span

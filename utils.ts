@@ -25,7 +25,8 @@ export interface MetaData{
     isFFA: boolean,
     player: PlayerData[],
     recordPlayerIdx: number,
-    gameId: string
+    gameId: string,
+    randomizedPos: boolean
 }
 
 export interface gamePlayerData {
@@ -45,7 +46,8 @@ export interface gamePlayerData {
     }[],
     map: string,
     gameType: string,
-    version: string
+    version: string,
+    randomizedPos: boolean
 }
 
 export const define = createDefine<State>();

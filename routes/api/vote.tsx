@@ -20,7 +20,8 @@ export const handler = define.handlers({
                     exeVerMinor: payload.gameData.exeVer.minor,
                     exeVerPatch: payload.gameData.exeVer.patch,
                     gameType: payload.gameData.isFFA ? GAME_TYPE_FFA : GAME_TYPE_TEAM,
-                    map: payload.gameData.map
+                    map: payload.gameData.map,
+                    randomizedPos: payload.gameData.randomizedPos
                 }).onConflictDoUpdate({
                     target: game.gameId,
                     set: { gameId: payload.gameData.gameId }
@@ -86,7 +87,8 @@ export const handler = define.handlers({
             return new Response("OK", {
                 status: 200,
             });
-        } catch {
+        } catch (err) {
+            console.log(err);
             return new Response("BAD REQUEST", {
                 status: 400
             });
