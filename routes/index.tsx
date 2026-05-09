@@ -1,12 +1,21 @@
 import { Head } from "fresh/runtime";
 import { define } from "../utils.ts";
 import SearchBarHome from "@/islands/SearchBarHome.tsx";
+import { page } from "fresh";
+import { getData } from "@/utils/4p2b.ts";
 
-export default define.page(function Home() {
+export const handler = define.handlers({
+  async GET() {
+    const data = await getData();
+    return page({ tourney4P2B: Object.keys(data) });
+  },
+});
+
+export default define.page<typeof handler>(({ data }) => {
     return (
         <div class="h-screen w-screen flex flex-col bg-page">
             <Head>
-                <title>Home</title>
+                <title>Home {}</title>
             </Head>
             <div class="flex flex-row my-auto">
                 <div class="border border-gray-200 rounded-[20px] px-8 pt-8 pb-6 flex flex-col mx-auto bg-card">
@@ -25,6 +34,18 @@ export default define.page(function Home() {
                         Submit Replay
                     </a>
                     <SearchBarHome/>
+
+                    <hr/>
+                    <div class="text-white font-bold text-center text-xl my-1">4P2B Tourneys 
+                        <span> <a class="text-white font-bold text-center text-xs underline hover:text-blue-400" href="https://fourpower2balance.onrender.com/" target="_blank">(Official site)</a></span>
+                    </div>
+                    {
+                        data.tourney4P2B.map(tourneyName => 
+                            <a key={'4p2b-' + tourneyName} class="text-white hover:text-gray-400" href={"4p2b/" + tourneyName.replaceAll(" ", "_")}>
+                                {tourneyName} videos
+                            </a>
+                        )
+                    }                    
                     
                     <hr class="my-4"/>
                     <div class="flex items-center justify-between">

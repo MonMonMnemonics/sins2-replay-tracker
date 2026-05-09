@@ -15,6 +15,8 @@
   "imports": {
     "@/": "./",
     "@libsql/client": "npm:@libsql/client@^0.17.2",
+    "@std/csv": "jsr:@std/csv@^1.0.6",
+    "@std/datetime": "jsr:@std/datetime@^0.225.7",
     "@std/uuid": "jsr:@std/uuid@^1.1.0",
     "@zip-js/zip-js": "jsr:@zip-js/zip-js@^2.8.26",
     "drizzle-kit": "npm:drizzle-kit@^0.31.10",
